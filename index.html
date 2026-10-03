@@ -7,12 +7,12 @@
 <title>DealTruth — Live deal checker</title>
 <style>
 :root{--bg:#f7f7f2;--card:#fff;--ink:#171816;--muted:#687069;--line:#e3e6df;--green:#173d2e;--good:#237a4b;--warn:#a05a00;--bad:#b52d2d}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Segoe UI,Roboto,sans-serif}.wrap{max-width:920px;margin:auto;padding:22px 16px 60px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:52px}.logo{font-size:21px;font-weight:900;letter-spacing:-.7px}.pill{padding:8px 12px;border:1px solid var(--line);border-radius:99px;background:#fff;color:var(--muted);font-size:12px}.hero{text-align:center;max-width:720px;margin:auto}.eyebrow{font-size:12px;font-weight:900;letter-spacing:1.6px;text-transform:uppercase;color:var(--good)}h1{font-size:clamp(43px,8vw,76px);line-height:.95;letter-spacing:-4px;margin:13px 0 20px}.hero p{max-width:590px;margin:auto;color:var(--muted);font-size:18px;line-height:1.55}.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:0 15px 45px #1820160a;margin-top:28px}.tabs{display:flex;gap:8px}.tab{flex:1;border:1px solid var(--line);background:#fafaf7;border-radius:14px;padding:13px;font-weight:800}.tab.active{background:var(--green);color:#fff}.hidden{display:none!important}input[type=url]{width:100%;margin:14px 0;padding:16px;border:1px solid var(--line);border-radius:14px;font-size:15px}.row{display:flex;gap:10px}.btn{border:0;border-radius:12px;padding:14px 17px;font-weight:900;cursor:pointer}.primary{background:var(--green);color:#fff}.secondary{background:#eceee8;color:#222}.drop{display:block;border:1.5px dashed #c8cbc3;border-radius:18px;padding:32px;text-align:center;color:var(--muted);cursor:pointer}.drop b{display:block;color:var(--ink);margin-bottom:5px}.preview img{max-width:100%;max-height:220px;border-radius:14px;margin-top:12px}.result{display:none;margin-top:22px}.score{display:flex;gap:16px;align-items:center;padding:18px;background:#f0f5f0;border-radius:18px}.circle{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:#fff;border:7px solid #8ab49a;font-size:20px;font-weight:950}.title{font-size:20px;font-weight:950}.small,.note{font-size:12px;color:var(--muted);line-height:1.5}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.check{padding:15px;border:1px solid var(--line);border-radius:16px;background:#fff}.check b{display:block;margin-bottom:6px}.status{font-size:12px;font-weight:850}.good{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}footer{text-align:center;color:var(--muted);font-size:12px;margin-top:42px}@media(max-width:650px){.grid{grid-template-columns:1fr 1fr}.row{flex-direction:column}h1{letter-spacing:-2.5px}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Segoe UI,Roboto,sans-serif}.wrap{max-width:920px;margin:auto;padding:22px 16px 60px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:52px}.top-actions{display:flex;align-items:center;gap:8px}.mini-btn{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 11px;color:var(--muted);font-size:12px;font-weight:850;cursor:pointer}.logo{font-size:21px;font-weight:900;letter-spacing:-.7px}.pill{padding:8px 12px;border:1px solid var(--line);border-radius:99px;background:#fff;color:var(--muted);font-size:12px}.hero{text-align:center;max-width:720px;margin:auto}.eyebrow{font-size:12px;font-weight:900;letter-spacing:1.6px;text-transform:uppercase;color:var(--good)}h1{font-size:clamp(43px,8vw,76px);line-height:.95;letter-spacing:-4px;margin:13px 0 20px}.hero p{max-width:590px;margin:auto;color:var(--muted);font-size:18px;line-height:1.55}.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:0 15px 45px #1820160a;margin-top:28px}.tabs{display:flex;gap:8px}.tab{flex:1;border:1px solid var(--line);background:#fafaf7;border-radius:14px;padding:13px;font-weight:800}.tab.active{background:var(--green);color:#fff}.hidden{display:none!important}input[type=url]{width:100%;margin:14px 0;padding:16px;border:1px solid var(--line);border-radius:14px;font-size:15px}.row{display:flex;gap:10px}.btn{border:0;border-radius:12px;padding:14px 17px;font-weight:900;cursor:pointer}.primary{background:var(--green);color:#fff}.secondary{background:#eceee8;color:#222}.drop{display:block;border:1.5px dashed #c8cbc3;border-radius:18px;padding:32px;text-align:center;color:var(--muted);cursor:pointer}.drop b{display:block;color:var(--ink);margin-bottom:5px}.preview img{max-width:100%;max-height:220px;border-radius:14px;margin-top:12px}.result{display:none;margin-top:22px}.score{display:flex;gap:16px;align-items:center;padding:18px;background:#f0f5f0;border-radius:18px}.circle{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:#fff;border:7px solid #8ab49a;font-size:20px;font-weight:950}.title{font-size:20px;font-weight:950}.small,.note{font-size:12px;color:var(--muted);line-height:1.5}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.check{padding:15px;border:1px solid var(--line);border-radius:16px;background:#fff}.check b{display:block;margin-bottom:6px}.status{font-size:12px;font-weight:850}.good{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}footer{text-align:center;color:var(--muted);font-size:12px;margin-top:42px}@media(max-width:650px){.grid{grid-template-columns:1fr 1fr}.row{flex-direction:column}h1{letter-spacing:-2.5px}}
 </style>
 </head>
 <body>
 <main class="wrap">
-<header class="top"><div class="logo">dealtruth<span style="color:#4c8b67">.</span></div><div class="pill">Check before you buy</div></header>
+<header class="top"><div class="logo">dealtruth<span style="color:#4c8b67">.</span></div><div class="top-actions"><div class="pill" id="sessionLabel">Check before you buy</div><button class="mini-btn hidden" id="signOut" type="button">Sign out</button></div></header>
 <section class="hero"><div class="eyebrow">A buyer's second opinion</div><h1>Don't buy the deal.<br>Check the deal.</h1><p>Paste a product link or upload a screenshot. DealTruth turns a sales page into a simple buyer checklist — with signals, warnings and the questions you should answer before paying.</p></section>
 <section class="card">
 <div class="tabs"><button class="tab active" id="urlTab">Product link</button><button class="tab" id="shotTab">Screenshot</button></div>
@@ -22,7 +22,12 @@
 <section class="result" id="result">
 <div class="score"><div class="circle" id="score">—</div><div><div class="title" id="headline">Report ready</div><div class="small" id="sub"></div></div></div>
 <div class="grid" id="checks"></div>
-<div class="card" style="margin-top:12px"><b>Before you pay</b><ul style="line-height:1.8;color:#4f534d"><li>Verify the seller's identity and return/refund policy.</li><li>Compare the exact model, specifications, warranty and total delivered price.</li><li>Don't treat a countdown or “limited offer” as proof of a bargain.</li></ul><div class="note">Prototype limitation: this version does not claim to verify authenticity, reviews or historical prices. Those require live data providers and a backend.</div></div>
+<div class="card" style="margin-top:12px"><b>Product details</b><div id="productDetails" class="small" style="margin-top:10px"></div></div>
+<div class="card" style="margin-top:12px"><b>Before you pay</b><ul style="line-height:1.8;color:#4f534d"><li>Verify the seller's identity and return/refund policy.</li><li>Compare the exact model, specifications, warranty and total delivered price.</li><li>Don't treat a countdown or “limited offer” as proof of a bargain.</li></ul><div class="note">DealTruth reports only data it can actually retrieve. Missing fields are not treated as verified.</div></div>
+</section>
+<section class="card" id="historyCard" style="display:none">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b>Your recent checks</b><button class="mini-btn" id="refreshHistory" type="button">Refresh</button></div>
+<div id="history" class="small" style="margin-top:12px"></div>
 </section>
 <footer>Independent buyer-assistance prototype · No payments handled</footer>
 </main>
@@ -31,20 +36,56 @@ const $=s=>document.querySelector(s);
 function tab(x){$("#urlTab").classList.toggle("active",x==="url");$("#shotTab").classList.toggle("active",x==="shot");$("#urlPane").classList.toggle("hidden",x!=="url");$("#shotPane").classList.toggle("hidden",x!=="shot")}
 $("#urlTab").onclick=()=>tab("url");$("#shotTab").onclick=()=>tab("shot");
 $("#file").onchange=e=>{const f=e.target.files[0];if(!f)return;$("#preview").innerHTML='<img src="'+URL.createObjectURL(f)+'">';};
+function esc(v){return String(v??"").replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function showDetails(p,d){
+ const items=[["Product",p.title],["Product ID",d.productId],["Price",p.price!=null?((p.currency||"")+" "+p.price):""],["Rating",p.rating!=null?p.rating+"/5":""],["Reviews",p.reviewCount!=null?Number(p.reviewCount).toLocaleString():""],["Seller",p.seller],["Brand",p.brand],["Availability",p.availability],["Shipping",p.shipping]];
+ $("#productDetails").innerHTML=items.filter(function(x){return x[1]}).map(function(x){return '<div style="padding:7px 0;border-bottom:1px solid var(--line)"><b>'+esc(x[0])+'</b><br>'+esc(x[1])+'</div>'}).join("")||"<div>No verified product fields were exposed.</div>";
+}
+async function saveCheck(url,d){
+ try{
+  const session=await supabase.auth.getSession();
+  const user=session?.data?.session?.user;
+  if(!user||!d?.ok)return;
+  await supabase.from("deal_checks").insert({user_id:user.id,product_url:url,product_name:d.product?.title||null,seller_name:d.product?.seller||null,result:d});
+  loadHistory();
+ }catch(e){}
+}
+async function loadHistory(){
+ try{
+  const session=await supabase.auth.getSession();
+  const user=session?.data?.session?.user;
+  if(!user){$("#historyCard").style.display="none";return}
+  const q=await supabase.from("deal_checks").select("id,product_name,seller_name,result,created_at").order("created_at",{ascending:false}).limit(10);
+  if(q.error)throw q.error;
+  $("#historyCard").style.display="block";
+  $("#history").innerHTML=q.data?.length?q.data.map(function(x){
+   const d=x.result||{}; const p=d.product||{};
+   const price=p.price!=null?((p.currency||"")+" "+p.price):"Price not exposed";
+   return '<div style="padding:10px 0;border-bottom:1px solid var(--line)"><b>'+esc(x.product_name||"Untitled check")+'</b><br>'+esc(price)+' · '+esc(x.seller_name||"Seller not exposed")+'<br><span>'+new Date(x.created_at).toLocaleString()+'</span></div>';
+  }).join(""):"No saved checks yet.";
+ }catch(e){$("#historyCard").style.display="block";$("#history").textContent="Could not load history."}
+}
 async function analyze(raw){
  const result=$("#result"),scoreEl=$("#score"),headline=$("#headline"),sub=$("#sub"),checks=$("#checks");
  result.style.display="block";result.scrollIntoView({behavior:"smooth"});scoreEl.textContent="…";headline.textContent="Checking live product data…";sub.textContent="Fetching the store page.";checks.innerHTML='<div class="check"><b>Live check</b><span class="status warn">Please wait…</span></div>';
  try{
   const r=await supabase.functions.invoke("analyze-product",{body:{url:raw}});
   const d=r.data;
-  if(r.error||!d?.ok){scoreEl.textContent="!";headline.textContent=d?.error||r.error?.message||"Could not check this link";return}
-  const p=d.product||{},s=d.signals||{},fields=[["Live page",s.pageReachable?"Reached":"Blocked",s.pageReachable?"good":"bad"],["Product",p.title?"Extracted":"Not found",p.title?"good":"warn"],["Price",p.price!=null?((p.currency||"")+" "+p.price):"Not exposed",p.price!=null?"good":"warn"],["Rating",p.rating!=null?p.rating+"/5":"Not exposed",p.rating!=null?"good":"warn"],["Reviews",p.reviewCount!=null?Number(p.reviewCount).toLocaleString():"Not exposed",p.reviewCount!=null?"good":"warn"],["Seller",p.seller||"Not exposed",p.seller?"good":"warn"]];
-  const good=fields.filter(x=>x[2]==="good").length;scoreEl.textContent=Math.round(good/fields.length*100);headline.textContent=d.live?(good>=5?"Strong data coverage":"Partial data coverage"):"Live verification incomplete";sub.textContent=(d.source||d.host)+" · "+(d.live?"Snapshot extracted from the product page.":"The store did not expose enough reliable data.");checks.innerHTML=fields.map(x=>'<div class="check"><b>'+x[0]+'</b><span class="status '+x[2]+'">'+x[1]+'</span></div>').join("");
+  if(r.error||!d?.ok){scoreEl.textContent="!";headline.textContent=d?.error||r.error?.message||"Could not check this link";sub.textContent="No report was saved.";return}
+  const p=d.product||{},sig=d.signals||{};
+  const fields=[["Live page",sig.pageReachable?"Reached":"Blocked",sig.pageReachable?"good":"bad"],["Product",p.title?"Extracted":"Not found",p.title?"good":"warn"],["Price",p.price!=null?((p.currency||"")+" "+p.price):"Not exposed",p.price!=null?"good":"warn"],["Rating",p.rating!=null?p.rating+"/5":"Not exposed",p.rating!=null?"good":"warn"],["Reviews",p.reviewCount!=null?Number(p.reviewCount).toLocaleString():"Not exposed",p.reviewCount!=null?"good":"warn"],["Seller",p.seller||"Not exposed",p.seller?"good":"warn"]];
+  const good=fields.filter(function(x){return x[2]==="good"}).length;
+  scoreEl.textContent=Math.round(good/fields.length*100);
+  headline.textContent=d.live?"Live data report":"Live verification incomplete";
+  sub.textContent=(d.source||d.host)+" · "+(d.live?"Data extracted from the fetched page.":"The store did not expose enough reliable data.");
+  checks.innerHTML=fields.map(function(x){return '<div class="check"><b>'+esc(x[0])+'</b><span class="status '+x[2]+'">'+esc(x[1])+'</span></div>'}).join("");
+  showDetails(p,d);
+  saveCheck(raw,d);
  }catch(e){scoreEl.textContent="!";headline.textContent="Connection problem";sub.textContent=e.message||"Could not reach the analyzer."}
 }
 $("#check").onclick=()=>{const v=$("#url").value.trim();if(!v){$("#url").focus();return}analyze(v)};
 $("#demo").onclick=()=>{$("#url").value="https://example.com";analyze($("#url").value)};
-$("#scan").onclick=()=>{if(!$("#file").files[0])return alert("Choose a screenshot first.");analyze("uploaded screenshot")};
+$("#scan").onclick=()=>{if(!$("#file").files[0])return alert("Choose a screenshot first.");$("#result").style.display="block";$("#result").scrollIntoView({behavior:"smooth"});$("#score").textContent="—";$("#headline").textContent="Screenshot loaded";$("#sub").textContent="OCR is not connected, so DealTruth is not pretending to verify screenshot claims.";$("#checks").innerHTML='<div class="check"><b>Screenshot</b><span class="status good">Image loaded</span></div><div class="check"><b>OCR</b><span class="status warn">Not connected</span></div><div class="check"><b>Live verification</b><span class="status warn">Use Product link mode</span></div>';$("#productDetails").innerHTML="<div>Use a product link for live extraction of page data.</div>"};
 </script>
 
 <!-- DealTruth Auth -->
@@ -78,13 +119,13 @@ const SUPABASE_URL="https://lmxonfeedjdsecmrdotb.supabase.co";
 const SUPABASE_KEY="sb_publishable_hKPwePKrPwVU4F7Pis85lg_64urR3uK";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
 let authMode="signin";
-const gate=document.getElementById("authGate"), authTitle=document.getElementById("authTitle"), authSubtitle=document.getElementById("authSubtitle"), authSubmit=document.getElementById("authSubmit"), switchAuth=document.getElementById("switchAuth"), confirmWrap=document.getElementById("confirmWrap"), confirmInput=document.getElementById("authConfirm"), msg=document.getElementById("authMessage");
+const gate=document.getElementById("authGate");const sessionLabel=document.getElementById("sessionLabel");const signOutBtn=document.getElementById("signOut");const historyCard=document.getElementById("historyCard");const refreshHistory=document.getElementById("refreshHistory");refreshHistory.onclick=loadHistory;signOutBtn.onclick=async()=>{await supabase.auth.signOut()};, authTitle=document.getElementById("authTitle"), authSubtitle=document.getElementById("authSubtitle"), authSubmit=document.getElementById("authSubmit"), switchAuth=document.getElementById("switchAuth"), confirmWrap=document.getElementById("confirmWrap"), confirmInput=document.getElementById("authConfirm"), msg=document.getElementById("authMessage");
 function authText(){const sign=authMode==="signin";authTitle.textContent=sign?"Welcome back":"Create your DealTruth account";authSubtitle.textContent=sign?"Sign in to save your deal checks and keep your history.":"Create an account to save checks and access them later.";authSubmit.textContent=sign?"Sign in":"Create account";confirmWrap.classList.toggle("hidden",sign);confirmInput.required=!sign;switchAuth.textContent=sign?"Create an account":"I already have an account";document.getElementById("forgot").classList.toggle("hidden",!sign);msg.textContent=""}
 switchAuth.onclick=()=>{authMode=authMode==="signin"?"signup":"signin";authText()};
 document.getElementById("authForm").addEventListener("submit",async e=>{e.preventDefault();msg.textContent="";const email=document.getElementById("authEmail").value.trim();const password=document.getElementById("authPassword").value;if(authMode==="signup"&&password!==confirmInput.value){msg.textContent="Passwords do not match.";return}authSubmit.disabled=true;authSubmit.textContent=authMode==="signin"?"Signing in…":"Creating account…";let data,error;if(authMode==="signin"){({data,error}=await supabase.auth.signInWithPassword({email,password}))}else{({data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin+window.location.pathname}}))}authSubmit.disabled=false;authSubmit.textContent=authMode==="signin"?"Sign in":"Create account";if(error){msg.textContent=error.message;return}if(authMode==="signup"&&!data.session){msg.textContent="Account created. Check your email to verify it, then sign in.";return}gate.classList.add("hidden");});
 document.getElementById("forgot").onclick=async()=>{const email=document.getElementById("authEmail").value.trim();if(!email){msg.textContent="Enter your email first.";return}const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+window.location.pathname});msg.textContent=error?error.message:"Password reset email sent. Check your inbox.";};
-supabase.auth.onAuthStateChange((event,session)=>{if(session)gate.classList.add("hidden");});
-(async()=>{const {data}=await supabase.auth.getSession();if(data.session)gate.classList.add("hidden");else authText()})();
+supabase.auth.onAuthStateChange((event,session)=>{if(session){gate.classList.add("hidden");sessionLabel.textContent="Signed in";signOutBtn.classList.remove("hidden");loadHistory()}else{gate.classList.remove("hidden");sessionLabel.textContent="Check before you buy";signOutBtn.classList.add("hidden");historyCard.style.display="none";authText()}});
+(async()=>{const {data}=await supabase.auth.getSession();if(data.session){gate.classList.add("hidden");sessionLabel.textContent="Signed in";signOutBtn.classList.remove("hidden");loadHistory()}else authText()})();
 </script>
 </body>
 </html>
