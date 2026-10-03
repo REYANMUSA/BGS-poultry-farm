@@ -36,5 +36,45 @@ $("#check").onclick=()=>{const v=$("#url").value.trim();if(!v){$("#url").focus()
 $("#demo").onclick=()=>{$("#url").value="https://example-store.com/products/wireless-headphones";analyze($("#url").value)};
 $("#scan").onclick=()=>{if(!$("#file").files[0])return alert("Choose a screenshot first.");analyze("uploaded screenshot")};
 </script>
+
+<!-- DealTruth Auth -->
+<div id="authGate" class="auth-gate">
+  <div class="auth-card">
+    <div class="auth-brand">dealtruth<span>.</span></div>
+    <div class="auth-kicker">Your buyer's second opinion</div>
+    <h2 id="authTitle">Welcome back</h2>
+    <p id="authSubtitle">Sign in to save your deal checks and keep your history.</p>
+    <form id="authForm">
+      <label>Email<input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+      <label>Password<input id="authPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters"></label>
+      <label id="confirmWrap" class="hidden">Confirm password<input id="authConfirm" type="password" autocomplete="new-password" minlength="8" placeholder="Repeat your password"></label>
+      <button class="auth-primary" id="authSubmit" type="submit">Sign in</button>
+    </form>
+    <button class="auth-link" id="forgot" type="button">Forgot password?</button>
+    <div class="auth-divider"><span>or</span></div>
+    <button class="auth-secondary" id="switchAuth" type="button">Create an account</button>
+    <div id="authMessage" class="auth-message" role="status"></div>
+    <div class="auth-note">Email verification is required when enabled in DealTruth security settings. No Google login.</div>
+  </div>
+</div>
+<style>
+.auth-gate{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:18px;background:rgba(20,28,23,.22);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.auth-card{width:min(430px,100%);padding:28px;border:1px solid rgba(255,255,255,.7);border-radius:30px;background:rgba(255,255,255,.68);box-shadow:inset 0 1px rgba(255,255,255,.9),0 30px 80px rgba(20,35,25,.18);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px)}
+.auth-brand{font-weight:950;font-size:24px;letter-spacing:-1px}.auth-brand span{color:#4c8b67}.auth-kicker{margin-top:22px;color:#237a4b;font-size:11px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase}.auth-card h2{font-size:32px;letter-spacing:-1.5px;margin:7px 0 6px}.auth-card p{margin:0 0 22px;color:#687069;line-height:1.5}.auth-card label{display:block;font-size:12px;font-weight:850;margin:12px 0;color:#343a35}.auth-card input{width:100%;margin-top:7px;padding:14px 15px;border:1px solid rgba(180,188,181,.75);border-radius:14px;background:rgba(255,255,255,.72);font:inherit;outline:none;box-shadow:inset 2px 2px 7px rgba(30,40,32,.05),inset -2px -2px 7px rgba(255,255,255,.7)}.auth-card input:focus{border-color:#78a88b;box-shadow:0 0 0 3px rgba(76,139,103,.12)}.auth-primary,.auth-secondary{width:100%;padding:14px;border-radius:14px;font-weight:900;border:0;cursor:pointer}.auth-primary{background:#173d2e;color:#fff;box-shadow:4px 5px 12px rgba(23,61,46,.16)}.auth-secondary{background:rgba(255,255,255,.62);color:#173d2e;border:1px solid rgba(190,198,191,.7)}.auth-link{display:block;margin:12px auto 2px;background:none;border:0;color:#237a4b;font-weight:800;font-size:12px;cursor:pointer}.auth-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:#89908a;font-size:11px}.auth-divider:before,.auth-divider:after{content:"";height:1px;flex:1;background:rgba(160,170,162,.45)}.auth-message{min-height:20px;margin-top:14px;text-align:center;font-size:12px;font-weight:750;color:#a05a00}.auth-note{margin-top:16px;text-align:center;color:#7b817b;font-size:10px;line-height:1.45}.auth-gate.hidden{display:none!important}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://lmxonfeedjdsecmrdotb.supabase.co";
+const SUPABASE_KEY="sb_publishable_hKPwePKrPwVU4F7Pis85lg_64urR3uK";
+const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let authMode="signin";
+const gate=document.getElementById("authGate"), authTitle=document.getElementById("authTitle"), authSubtitle=document.getElementById("authSubtitle"), authSubmit=document.getElementById("authSubmit"), switchAuth=document.getElementById("switchAuth"), confirmWrap=document.getElementById("confirmWrap"), confirmInput=document.getElementById("authConfirm"), msg=document.getElementById("authMessage");
+function authText(){const sign=authMode==="signin";authTitle.textContent=sign?"Welcome back":"Create your DealTruth account";authSubtitle.textContent=sign?"Sign in to save your deal checks and keep your history.":"Create an account to save checks and access them later.";authSubmit.textContent=sign?"Sign in":"Create account";confirmWrap.classList.toggle("hidden",sign);confirmInput.required=!sign;switchAuth.textContent=sign?"Create an account":"I already have an account";document.getElementById("forgot").classList.toggle("hidden",!sign);msg.textContent=""}
+switchAuth.onclick=()=>{authMode=authMode==="signin"?"signup":"signin";authText()};
+document.getElementById("authForm").addEventListener("submit",async e=>{e.preventDefault();msg.textContent="";const email=document.getElementById("authEmail").value.trim();const password=document.getElementById("authPassword").value;if(authMode==="signup"&&password!==confirmInput.value){msg.textContent="Passwords do not match.";return}authSubmit.disabled=true;authSubmit.textContent=authMode==="signin"?"Signing in…":"Creating account…";let data,error;if(authMode==="signin"){({data,error}=await supabase.auth.signInWithPassword({email,password}))}else{({data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin+window.location.pathname}}))}authSubmit.disabled=false;authSubmit.textContent=authMode==="signin"?"Sign in":"Create account";if(error){msg.textContent=error.message;return}if(authMode==="signup"&&!data.session){msg.textContent="Account created. Check your email to verify it, then sign in.";return}gate.classList.add("hidden");});
+document.getElementById("forgot").onclick=async()=>{const email=document.getElementById("authEmail").value.trim();if(!email){msg.textContent="Enter your email first.";return}const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+window.location.pathname});msg.textContent=error?error.message:"Password reset email sent. Check your inbox.";};
+supabase.auth.onAuthStateChange((event,session)=>{if(session)gate.classList.add("hidden");});
+(async()=>{const {data}=await supabase.auth.getSession();if(data.session)gate.classList.add("hidden");else authText()})();
+</script>
 </body>
 </html>
