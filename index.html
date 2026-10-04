@@ -43,19 +43,19 @@ function showDetails(p,d){
 }
 async function saveCheck(url,d){
  try{
-  const session=await supabase.auth.getSession();
+  const session=await window.supabase.auth.getSession();
   const user=session?.data?.session?.user;
   if(!user||!d?.ok)return;
-  await supabase.from("deal_checks").insert({user_id:user.id,product_url:url,product_name:d.product?.title||null,seller_name:d.product?.seller||null,result:d});
+  await window.supabase.from("deal_checks").insert({user_id:user.id,product_url:url,product_name:d.product?.title||null,seller_name:d.product?.seller||null,result:d});
   loadHistory();
  }catch(e){}
 }
 async function loadHistory(){
  try{
-  const session=await supabase.auth.getSession();
+  const session=await window.supabase.auth.getSession();
   const user=session?.data?.session?.user;
   if(!user){$("#historyCard").style.display="none";return}
-  const q=await supabase.from("deal_checks").select("id,product_name,seller_name,result,created_at").order("created_at",{ascending:false}).limit(10);
+  const q=await window.supabase.from("deal_checks").select("id,product_name,seller_name,result,created_at").order("created_at",{ascending:false}).limit(10);
   if(q.error)throw q.error;
   $("#historyCard").style.display="block";
   $("#history").innerHTML=q.data?.length?q.data.map(function(x){
@@ -69,7 +69,7 @@ async function analyze(raw){
  const result=$("#result"),scoreEl=$("#score"),headline=$("#headline"),sub=$("#sub"),checks=$("#checks");
  result.style.display="block";result.scrollIntoView({behavior:"smooth"});scoreEl.textContent="…";headline.textContent="Checking live product data…";sub.textContent="Fetching the store page.";checks.innerHTML='<div class="check"><b>Live check</b><span class="status warn">Please wait…</span></div>';
  try{
-  const r=await supabase.functions.invoke("analyze-product",{body:{url:raw}});
+  const r=await window.supabase.functions.invoke("analyze-product",{body:{url:raw}});
   const d=r.data;
   if(r.error||!d?.ok){scoreEl.textContent="!";headline.textContent=d?.error||r.error?.message||"Could not check this link";sub.textContent="No report was saved.";return}
   const p=d.product||{},sig=d.signals||{};
@@ -117,7 +117,7 @@ $("#scan").onclick=()=>{if(!$("#file").files[0])return alert("Choose a screensho
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const SUPABASE_URL="https://lmxonfeedjdsecmrdotb.supabase.co";
 const SUPABASE_KEY="sb_publishable_hKPwePKrPwVU4F7Pis85lg_64urR3uK";
-const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
+const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);window.supabase=supabase;
 let authMode="signin";
 const gate=document.getElementById("authGate");const sessionLabel=document.getElementById("sessionLabel");const signOutBtn=document.getElementById("signOut");const historyCard=document.getElementById("historyCard");const refreshHistory=document.getElementById("refreshHistory");refreshHistory.onclick=loadHistory;signOutBtn.onclick=async()=>{await supabase.auth.signOut()};const authTitle=document.getElementById("authTitle"), authSubtitle=document.getElementById("authSubtitle"), authSubmit=document.getElementById("authSubmit"), switchAuth=document.getElementById("switchAuth"), confirmWrap=document.getElementById("confirmWrap"), confirmInput=document.getElementById("authConfirm"), msg=document.getElementById("authMessage");
 function authText(){const sign=authMode==="signin";authTitle.textContent=sign?"Welcome back":"Create your DealTruth account";authSubtitle.textContent=sign?"Sign in to save your deal checks and keep your history.":"Create an account to save checks and access them later.";authSubmit.textContent=sign?"Sign in":"Create account";confirmWrap.classList.toggle("hidden",sign);confirmInput.required=!sign;switchAuth.textContent=sign?"Create an account":"I already have an account";document.getElementById("forgot").classList.toggle("hidden",!sign);msg.textContent=""}
