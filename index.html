@@ -24,17 +24,17 @@
 <body>
 <main class="wrap">
 <header class="top"><div class="logo">dealtruth<span style="color:#4c8b67">.</span></div><div class="top-actions"><div class="pill" id="sessionLabel">Check before you buy</div><button class="mini-btn hidden" id="signOut" type="button">Sign out</button></div></header>
-<section class="hero"><div class="eyebrow">A buyer's second opinion</div><h1>Don't buy the deal.<br>Check the deal.</h1><p>Paste a product link or upload a screenshot. DealTruth turns a sales page into a simple buyer checklist — with signals, warnings and the questions you should answer before paying.</p></section>
+<section class="hero"><div class="eyebrow">A buyer's second opinion</div><h1>Don't buy the deal.<br>Check the deal.</h1><p>Paste almost any public product page. DealTruth turns the sales page into a buyer-focused report — product identity, price, seller, reviews, availability and the evidence you should check before paying.</p></section>
 <section class="card">
 <div class="tabs"><button class="tab active" id="urlTab">Product link</button><button class="tab" id="shotTab">Screenshot</button></div>
-<div id="urlPane"><input id="url" type="url" placeholder="https://shop.example/product/..."><div class="row"><button class="btn primary" id="check">Check this deal →</button><button class="btn secondary" id="demo">Try demo</button></div></div>
+<div id="urlPane"><input id="url" type="url" placeholder="https://any-store.com/product/..."><div class="row"><button class="btn primary" id="check">Check this product →</button><button class="btn secondary" id="demo">Try a real example</button></div><div class="small" style="margin-top:10px;text-align:center">Amazon · AliExpress · eBay · Walmart · Temu · Etsy · Shopify/WooCommerce · independent stores</div></div>
 <div id="shotPane" class="hidden"><label class="drop" for="file"><b>Upload a product screenshot</b>Tap to choose an image<input class="hidden" id="file" type="file" accept="image/*"></label><div class="preview" id="preview"></div><button class="btn primary" id="scan" style="width:100%;margin-top:12px">Inspect screenshot →</button></div>
 </section>
 <section class="result" id="result">
-<div class="score"><div class="circle" id="score">—</div><div><div class="title" id="headline">Report ready</div><div class="small" id="sub"></div></div></div>
+<div class="score"><div class="circle" id="score">—</div><div><div class="title" id="headline">Report ready</div><div class="small" id="sub"></div><div class="small" id="engine" style="margin-top:4px"></div></div></div>
 <div class="grid" id="checks"></div>
 <div class="card" style="margin-top:12px"><b>Product details</b><div id="productDetails" class="small" style="margin-top:10px"></div></div>
-<div class="card" style="margin-top:12px"><b>Before you pay</b><ul style="line-height:1.8;color:#4f534d"><li>Verify the seller's identity and return/refund policy.</li><li>Compare the exact model, specifications, warranty and total delivered price.</li><li>Don't treat a countdown or “limited offer” as proof of a bargain.</li></ul><div class="note">DealTruth reports only data it can actually retrieve. Missing fields are not treated as verified.</div></div>
+<div class="card" style="margin-top:12px"><b>Before you pay</b><ul style="line-height:1.8;color:#4f534d"><li>Verify the seller's identity and return/refund policy.</li><li>Compare the exact model, specifications, warranty and total delivered price.</li><li>Don't treat a countdown or “limited offer” as proof of a bargain.</li></ul><div class="note">DealTruth reports only data it can actually retrieve. Missing fields are not treated as verified. A high field-coverage number is not proof that the price is a bargain.</div></div>
 </section>
 <section class="card" id="historyCard" style="display:none">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b>Your recent checks</b><button class="mini-btn" id="refreshHistory" type="button">Refresh</button></div>
@@ -49,10 +49,27 @@ $("#urlTab").onclick=()=>tab("url");$("#shotTab").onclick=()=>tab("shot");
 $("#file").onchange=e=>{const f=e.target.files[0];if(!f)return;$("#preview").innerHTML='<img src="'+URL.createObjectURL(f)+'">';};
 function esc(v){return String(v??"").replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function showDetails(p,d){
- const items=[["Product",p.title],["Product ID",d.productId],["Price",p.price!=null?((p.currency||"")+" "+p.price):""],["Rating",p.rating!=null?p.rating+"/5":""],["Reviews",p.reviewCount!=null?Number(p.reviewCount).toLocaleString():""],["Seller",p.seller],["Brand",p.brand],["Availability",p.availability],["Shipping",p.shipping]];
- $("#productDetails").innerHTML=items.filter(function(x){return x[1]}).map(function(x){return '<div style="padding:7px 0;border-bottom:1px solid var(--line)"><b>'+esc(x[0])+'</b><br>'+esc(x[1])+'</div>'}).join("")||"<div>No verified product fields were exposed.</div>";
-}
-async function saveCheck(url,d){
+ const fmtPrice=(amount,currency)=>amount!=null?((currency||"")+" "+Number(amount).toLocaleString(undefined,{maximumFractionDigits:2})).trim():"";
+ const items=[
+   ["Product",p.title],
+   ["Product ID",p.productId],
+   ["SKU",p.sku],
+   ["Brand",p.brand],
+   ["Category",p.category],
+   ["Price",fmtPrice(p.price,p.currency)],
+   ["Original price",fmtPrice(p.originalPrice,p.currency)],
+   ["Rating",p.rating!=null?p.rating+"/5":""],
+   ["Reviews",p.reviewCount!=null?Number(p.reviewCount).toLocaleString():""],
+   ["Seller",p.seller],
+   ["Availability",p.availability],
+   ["Shipping",p.shipping]
+ ];
+ const image=p.image?'<div style="margin-bottom:12px"><img src="'+esc(p.image)+'" alt="" style="width:88px;height:88px;object-fit:contain;border:1px solid var(--line);border-radius:14px;background:#fff"></div>':"";
+ const desc=p.description?'<div style="padding:9px 0;color:#4f534d">'+esc(p.description).slice(0,500)+(String(p.description).length>500?"…":"")+'</div>':"";
+ const variants=Array.isArray(p.variants)&&p.variants.length?'<div style="padding:9px 0"><b>Variants</b><br>'+p.variants.slice(0,8).map(function(v){const name=esc(v.title||"Variant");const price=v.price?.formatted?esc(v.price.formatted):"";const avail=v.availability?.text?esc(v.availability.text):"";return '<span style="display:inline-block;padding:6px 8px;margin:5px 5px 0 0;border:1px solid var(--line);border-radius:10px;font-size:11px">'+name+(price?" · "+price:"")+(avail?" · "+avail:"")+'</span>'}).join("")+'</div>':"";
+ const link=d.finalUrl?'<a href="'+esc(d.finalUrl)+'" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:12px;color:var(--good);font-weight:850">Open source product page ↗</a>':"";
+ $("#productDetails").innerHTML=image+items.filter(function(x){return x[1]!==""&&x[1]!=null}).map(function(x){return '<div style="padding:7px 0;border-bottom:1px solid var(--line)"><b>'+esc(x[0])+'</b><br>'+esc(x[1])+'</div>'}).join("")+desc+variants+link;
+}(url,d){
  try{
   const session=await window.supabase.auth.getSession();
   const user=session?.data?.session?.user;
@@ -77,25 +94,35 @@ async function loadHistory(){
  }catch(e){$("#historyCard").style.display="block";$("#history").textContent="Could not load history."}
 }
 async function analyze(raw){
- const result=$("#result"),scoreEl=$("#score"),headline=$("#headline"),sub=$("#sub"),checks=$("#checks");
- result.style.display="block";result.scrollIntoView({behavior:"smooth"});scoreEl.textContent="…";headline.textContent="Checking live product data…";sub.textContent="Fetching the store page.";checks.innerHTML='<div class="check"><b>Live check</b><span class="status warn">Please wait…</span></div>';
+ const result=$("#result"),scoreEl=$("#score"),headline=$("#headline"),sub=$("#sub"),checks=$("#checks"),engine=$("#engine");
+ result.style.display="block";result.scrollIntoView({behavior:"smooth"});scoreEl.textContent="…";headline.textContent="Checking live product data…";sub.textContent="Fetching and extracting the public product page.";engine.textContent="";checks.innerHTML='<div class="check"><b>Live check</b><span class="status warn">Please wait…</span></div>';
  try{
   const r=await window.supabase.functions.invoke("analyze-product",{body:{url:raw}});
   const d=r.data;
-  if(r.error||!d?.ok){scoreEl.textContent="!";headline.textContent=d?.error||r.error?.message||"Could not check this link";sub.textContent=d?.error?.code==="FETCH_BLOCKED"?"The store blocked automated access. Try another store or connect a marketplace data provider.":"No report was saved.";return}
+  if(r.error||!d?.ok){scoreEl.textContent="!";headline.textContent=d?.error||r.error?.message||"Could not check this link";sub.textContent=d?.error?.code==="FETCH_BLOCKED"?"The store blocked automated access. Try another public product page.":"No report was saved.";engine.textContent=d?.code==="FIRECRAWL_NOT_CONFIGURED"?"Enhanced extraction is not configured yet.":"";return}
   const p=d.product||{},sig=d.signals||{};
-  const fields=[["Live page",sig.pageReachable?"Reached":"Blocked",sig.pageReachable?"good":"bad"],["Product",p.title?"Extracted":"Not found",p.title?"good":"warn"],["Price",p.price!=null?((p.currency||"")+" "+p.price):"Not exposed",p.price!=null?"good":"warn"],["Rating",p.rating!=null?p.rating+"/5":"Not exposed",p.rating!=null?"good":"warn"],["Reviews",p.reviewCount!=null?Number(p.reviewCount).toLocaleString():"Not exposed",p.reviewCount!=null?"good":"warn"],["Seller",p.seller||"Not exposed",p.seller?"good":"warn"]];
+  const fields=[
+   ["Live page",sig.pageReachable?"Reached":"Blocked",sig.pageReachable?"good":"bad"],
+   ["Product",p.title?"Identified":"Not found",p.title?"good":"warn"],
+   ["Price",p.price!=null?((p.currency||"")+" "+Number(p.price).toLocaleString(undefined,{maximumFractionDigits:2})).trim():"Not exposed",p.price!=null?"good":"warn"],
+   ["Rating",p.rating!=null?p.rating+"/5":"Not exposed",p.rating!=null?"good":"warn"],
+   ["Reviews",p.reviewCount!=null?Number(p.reviewCount).toLocaleString():"Not exposed",p.reviewCount!=null?"good":"warn"],
+   ["Seller",p.seller||"Not exposed",p.seller?"good":"warn"],
+   ["Availability",p.availability||"Not exposed",p.availability?"good":"warn"]
+  ];
   const good=fields.filter(function(x){return x[2]==="good"}).length;
-  scoreEl.textContent=Math.round(good/fields.length*100);
-  headline.textContent=d.live?"Live data report":"Live verification incomplete";
-  sub.textContent=(d.source||d.host)+" · "+(d.live?"Data extracted from the fetched page.":"The store did not expose enough reliable data.");
+  const coverage=Math.round(good/fields.length*100);
+  scoreEl.textContent=(d.coverage!=null?d.coverage:coverage)+"%";
+  headline.textContent=d.live?"Live product report":"Live verification incomplete";
+  sub.textContent=(d.source||d.host)+" · "+(d.live?"Data extracted from the public page.":"Not enough reliable data was exposed.");
+  engine.textContent=(d.engine==="firecrawl"?"Enhanced extraction · Firecrawl":d.engine==="direct"?"Direct page fallback":"Extraction engine unavailable")+(d.coverage!=null?" · "+d.coverage+"% field coverage":"");
   checks.innerHTML=fields.map(function(x){return '<div class="check"><b>'+esc(x[0])+'</b><span class="status '+x[2]+'">'+esc(x[1])+'</span></div>'}).join("");
   showDetails(p,d);
   saveCheck(raw,d);
- }catch(e){scoreEl.textContent="!";headline.textContent="Connection problem";sub.textContent=e.message||"Could not reach the analyzer."}
+ }catch(e){scoreEl.textContent="!";headline.textContent="Connection problem";sub.textContent=e.message||"Could not reach the analyzer.";engine.textContent="Try again in a moment."}
 }
 $("#check").onclick=()=>{const v=$("#url").value.trim();if(!v){$("#url").focus();return}analyze(v)};
-$("#demo").onclick=()=>{$("#url").value="https://example.com";analyze($("#url").value)};
+$("#demo").onclick=()=>{$("#url").value="https://www.allbirds.com/products/mens-tree-runners";analyze($("#url").value)};
 $("#scan").onclick=()=>{if(!$("#file").files[0])return alert("Choose a screenshot first.");$("#result").style.display="block";$("#result").scrollIntoView({behavior:"smooth"});$("#score").textContent="—";$("#headline").textContent="Screenshot loaded";$("#sub").textContent="OCR is not connected, so DealTruth is not pretending to verify screenshot claims.";$("#checks").innerHTML='<div class="check"><b>Screenshot</b><span class="status good">Image loaded</span></div><div class="check"><b>OCR</b><span class="status warn">Not connected</span></div><div class="check"><b>Live verification</b><span class="status warn">Use Product link mode</span></div>';$("#productDetails").innerHTML="<div>Use a product link for live extraction of page data.</div>"};
 </script>
 
