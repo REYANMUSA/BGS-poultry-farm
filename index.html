@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f7f7f2">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://esm.sh; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
 <meta name="description" content="DealTruth checks product links for price, seller, rating, reviews and other buyer signals before you buy.">
 <link rel="canonical" href="https://reyanmusa.github.io/BGS-poultry-farm/">
 <meta property="og:title" content="DealTruth — Check before you buy">
@@ -37,7 +40,7 @@
 <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b>Your recent checks</b><button class="mini-btn" id="refreshHistory" type="button">Refresh</button></div>
 <div id="history" class="small" style="margin-top:12px"></div>
 </section>
-<footer>Independent buyer-assistance prototype · No payments handled</footer>
+<footer>Independent buyer-assistance tool · No payments handled · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href=".well-known/security.txt">Security</a></footer>
 </main>
 <script>
 const $=s=>document.querySelector(s);
@@ -79,7 +82,7 @@ async function analyze(raw){
  try{
   const r=await window.supabase.functions.invoke("analyze-product",{body:{url:raw}});
   const d=r.data;
-  if(r.error||!d?.ok){scoreEl.textContent="!";headline.textContent=d?.error||r.error?.message||"Could not check this link";sub.textContent="No report was saved.";return}
+  if(r.error||!d?.ok){scoreEl.textContent="!";headline.textContent=d?.error||r.error?.message||"Could not check this link";sub.textContent=d?.error?.code==="FETCH_BLOCKED"?"The store blocked automated access. Try another store or connect a marketplace data provider.":"No report was saved.";return}
   const p=d.product||{},sig=d.signals||{};
   const fields=[["Live page",sig.pageReachable?"Reached":"Blocked",sig.pageReachable?"good":"bad"],["Product",p.title?"Extracted":"Not found",p.title?"good":"warn"],["Price",p.price!=null?((p.currency||"")+" "+p.price):"Not exposed",p.price!=null?"good":"warn"],["Rating",p.rating!=null?p.rating+"/5":"Not exposed",p.rating!=null?"good":"warn"],["Reviews",p.reviewCount!=null?Number(p.reviewCount).toLocaleString():"Not exposed",p.reviewCount!=null?"good":"warn"],["Seller",p.seller||"Not exposed",p.seller?"good":"warn"]];
   const good=fields.filter(function(x){return x[2]==="good"}).length;
