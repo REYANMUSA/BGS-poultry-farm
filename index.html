@@ -69,7 +69,7 @@ function showDetails(p,d){
  const variants=Array.isArray(p.variants)&&p.variants.length?'<div style="padding:9px 0"><b>Variants</b><br>'+p.variants.slice(0,8).map(function(v){const name=esc(v.title||"Variant");const price=v.price?.formatted?esc(v.price.formatted):"";const avail=v.availability?.text?esc(v.availability.text):"";return '<span style="display:inline-block;padding:6px 8px;margin:5px 5px 0 0;border:1px solid var(--line);border-radius:10px;font-size:11px">'+name+(price?" · "+price:"")+(avail?" · "+avail:"")+'</span>'}).join("")+'</div>':"";
  const link=d.finalUrl?'<a href="'+esc(d.finalUrl)+'" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:12px;color:var(--good);font-weight:850">Open source product page ↗</a>':"";
  $("#productDetails").innerHTML=image+items.filter(function(x){return x[1]!==""&&x[1]!=null}).map(function(x){return '<div style="padding:7px 0;border-bottom:1px solid var(--line)"><b>'+esc(x[0])+'</b><br>'+esc(x[1])+'</div>'}).join("")+desc+variants+link;
-}(url,d){
+async function saveCheck(url,d){
  try{
   const session=await window.supabase.auth.getSession();
   const user=session?.data?.session?.user;
@@ -153,17 +153,167 @@ $("#scan").onclick=()=>{if(!$("#file").files[0])return alert("Choose a screensho
 </style>
 <script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
 const SUPABASE_URL="https://lmxonfeedjdsecmrdotb.supabase.co";
 const SUPABASE_KEY="sb_publishable_hKPwePKrPwVU4F7Pis85lg_64urR3uK";
-const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);window.supabase=supabase;
+
+const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{
+  auth:{
+    persistSession:true,
+    autoRefreshToken:true,
+    detectSessionInUrl:true,
+    storage:window.localStorage
+  }
+});
+window.supabase=supabase;
+
 let authMode="signin";
-const gate=document.getElementById("authGate");const sessionLabel=document.getElementById("sessionLabel");const signOutBtn=document.getElementById("signOut");const historyCard=document.getElementById("historyCard");const refreshHistory=document.getElementById("refreshHistory");refreshHistory.onclick=loadHistory;signOutBtn.onclick=async()=>{await supabase.auth.signOut()};const authTitle=document.getElementById("authTitle"), authSubtitle=document.getElementById("authSubtitle"), authSubmit=document.getElementById("authSubmit"), switchAuth=document.getElementById("switchAuth"), confirmWrap=document.getElementById("confirmWrap"), confirmInput=document.getElementById("authConfirm"), msg=document.getElementById("authMessage");
-function authText(){const sign=authMode==="signin";authTitle.textContent=sign?"Welcome back":"Create your DealTruth account";authSubtitle.textContent=sign?"Sign in to save your deal checks and keep your history.":"Create an account to save checks and access them later.";authSubmit.textContent=sign?"Sign in":"Create account";confirmWrap.classList.toggle("hidden",sign);confirmInput.required=!sign;switchAuth.textContent=sign?"Create an account":"I already have an account";document.getElementById("forgot").classList.toggle("hidden",!sign);msg.textContent=""}
-switchAuth.onclick=()=>{authMode=authMode==="signin"?"signup":"signin";authText()};
-document.getElementById("authForm").addEventListener("submit",async e=>{e.preventDefault();msg.textContent="";const email=document.getElementById("authEmail").value.trim();const password=document.getElementById("authPassword").value;if(authMode==="signup"&&password!==confirmInput.value){msg.textContent="Passwords do not match.";return}authSubmit.disabled=true;authSubmit.textContent=authMode==="signin"?"Signing in…":"Creating account…";let data,error;if(authMode==="signin"){({data,error}=await supabase.auth.signInWithPassword({email,password}))}else{({data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin+window.location.pathname}}))}authSubmit.disabled=false;authSubmit.textContent=authMode==="signin"?"Sign in":"Create account";if(error){msg.textContent=error.message;return}if(authMode==="signup"&&!data.session){msg.textContent="Account created. Check your email to verify it, then sign in.";return}gate.classList.add("hidden");});
-document.getElementById("forgot").onclick=async()=>{const email=document.getElementById("authEmail").value.trim();if(!email){msg.textContent="Enter your email first.";return}const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+window.location.pathname});msg.textContent=error?error.message:"Password reset email sent. Check your inbox.";};
-supabase.auth.onAuthStateChange((event,session)=>{if(session){gate.classList.add("hidden");sessionLabel.textContent="Signed in";signOutBtn.classList.remove("hidden");loadHistory()}else{gate.classList.remove("hidden");sessionLabel.textContent="Check before you buy";signOutBtn.classList.add("hidden");historyCard.style.display="none";authText()}});
-(async()=>{const {data}=await supabase.auth.getSession();if(data.session){gate.classList.add("hidden");sessionLabel.textContent="Signed in";signOutBtn.classList.remove("hidden");loadHistory()}else authText()})();
+const gate=document.getElementById("authGate");
+const sessionLabel=document.getElementById("sessionLabel");
+const signOutBtn=document.getElementById("signOut");
+const historyCard=document.getElementById("historyCard");
+const refreshHistory=document.getElementById("refreshHistory");
+const authTitle=document.getElementById("authTitle");
+const authSubtitle=document.getElementById("authSubtitle");
+const authSubmit=document.getElementById("authSubmit");
+const switchAuth=document.getElementById("switchAuth");
+const confirmWrap=document.getElementById("confirmWrap");
+const confirmInput=document.getElementById("authConfirm");
+const msg=document.getElementById("authMessage");
+
+refreshHistory.onclick=loadHistory;
+
+function authText(){
+  const sign=authMode==="signin";
+  authTitle.textContent=sign?"Welcome back":"Create your DealTruth account";
+  authSubtitle.textContent=sign
+    ?"Sign in to save your deal checks and keep your history."
+    :"Create an account to save checks and access them later.";
+  authSubmit.textContent=sign?"Sign in":"Create account";
+  confirmWrap.classList.toggle("hidden",sign);
+  confirmInput.required=!sign;
+  switchAuth.textContent=sign?"Create an account":"I already have an account";
+  document.getElementById("forgot").classList.toggle("hidden",!sign);
+  msg.textContent="";
+}
+
+function showSignedIn(session){
+  gate.classList.add("hidden");
+  sessionLabel.textContent="Signed in";
+  signOutBtn.classList.remove("hidden");
+  window.setTimeout(()=>loadHistory(),0);
+}
+
+function showSignedOut(){
+  gate.classList.remove("hidden");
+  sessionLabel.textContent="Check before you buy";
+  signOutBtn.classList.add("hidden");
+  historyCard.style.display="none";
+  authText();
+}
+
+switchAuth.onclick=()=>{
+  authMode=authMode==="signin"?"signup":"signin";
+  authText();
+};
+
+signOutBtn.onclick=async()=>{
+  const {error}=await supabase.auth.signOut();
+  if(error) msg.textContent=error.message;
+};
+
+document.getElementById("authForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  msg.textContent="";
+
+  const email=document.getElementById("authEmail").value.trim();
+  const password=document.getElementById("authPassword").value;
+
+  if(authMode==="signup"&&password!==confirmInput.value){
+    msg.textContent="Passwords do not match.";
+    return;
+  }
+
+  authSubmit.disabled=true;
+  authSubmit.textContent=authMode==="signin"?"Signing in…":"Creating account…";
+
+  try{
+    let data,error;
+
+    if(authMode==="signin"){
+      ({data,error}=await supabase.auth.signInWithPassword({email,password}));
+    }else{
+      ({data,error}=await supabase.auth.signUp({
+        email,
+        password,
+        options:{emailRedirectTo:window.location.origin+window.location.pathname}
+      }));
+    }
+
+    if(error){
+      msg.textContent=error.message;
+      return;
+    }
+
+    if(authMode==="signup"&&!data.session){
+      msg.textContent="Account created. Check your email to verify it, then sign in.";
+      return;
+    }
+
+    let session=data?.session||null;
+
+    if(!session){
+      const current=await supabase.auth.getSession();
+      session=current.data?.session||null;
+    }
+
+    if(session){
+      showSignedIn(session);
+      msg.textContent="";
+    }else{
+      msg.textContent="Login succeeded, but the browser did not keep the session. Please try again in your normal browser.";
+    }
+  }catch(err){
+    msg.textContent=err?.message||"Could not sign in. Please try again.";
+  }finally{
+    authSubmit.disabled=false;
+    authSubmit.textContent=authMode==="signin"?"Sign in":"Create account";
+  }
+});
+
+document.getElementById("forgot").onclick=async()=>{
+  const email=document.getElementById("authEmail").value.trim();
+  if(!email){
+    msg.textContent="Enter your email first.";
+    return;
+  }
+
+  const {error}=await supabase.auth.resetPasswordForEmail(email,{
+    redirectTo:window.location.origin+window.location.pathname
+  });
+
+  msg.textContent=error?error.message:"Password reset email sent. Check your inbox.";
+};
+
+supabase.auth.onAuthStateChange((event,session)=>{
+  if(session){
+    showSignedIn(session);
+  }else if(event==="SIGNED_OUT"||event==="INITIAL_SESSION"){
+    showSignedOut();
+  }
+});
+
+(async()=>{
+  try{
+    const {data,error}=await supabase.auth.getSession();
+    if(error) throw error;
+    if(data.session) showSignedIn(data.session);
+    else showSignedOut();
+  }catch(error){
+    msg.textContent=error?.message||"Could not restore your session.";
+    showSignedOut();
+  }
+})();
 </script>
 </body>
 </html>
