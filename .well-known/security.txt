@@ -1,0 +1,5 @@
+Contact: https://github.com/REYANMUSA/BGS-poultry-farm/issues/new
+Policy: https://reyanmusa.github.io/BGS-poultry-farm/terms.html
+Preferred-Languages: en
+Canonical: https://reyanmusa.github.io/BGS-poultry-farm/.well-known/security.txt
+Expires: 2027-10-04
